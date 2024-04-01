@@ -4,6 +4,7 @@ const zod = require("zod");
 const jwt = require("jsonwebtoken")
 const jwtSecret = require("../config")
 const User = require("../db")
+const authMiddleware = require("../middleware")
 
 const data = zod.object(
     {
@@ -62,13 +63,16 @@ router.post("/signin" , async (req , res) => {
         })
     }
 
-    const existingUser = await User.findOne({
+    const user = await User.findOne({
         username : req.body.username,
         password : req.body.password
     })
 
-    if (existingUser) {
-        const token = jwt.sign( existingUser._id, jwtSecret)
+    const userid = user._id;
+
+    if (user) {
+
+        const token = jwt.sign(userid, jwtSecret)
         res.status(200).json({
             token : token
         })

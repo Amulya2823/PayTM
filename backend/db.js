@@ -1,4 +1,5 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const { number } = require("zod");
 const {Schema} = "mongoose";
 
 mongoose.connect("mongodb://localhost:27017/paytm");
@@ -33,6 +34,15 @@ const userData = new Schema({
 });
 
 const User = mongoose.model(User , userData )
+
+const bankSchema = new Schema({
+    userId : {
+        type : String,
+    },
+    balance :{
+        type: float || number ,
+    }
+})
 
 module.exports = {
     User

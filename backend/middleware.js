@@ -16,8 +16,15 @@ const authMiddleware = (req , res , next) => {
 
     try{
         const decodedJwt = jwt.decode(token , jwtSecret)
-        req.userid = decodedJwt.userid
-        next();
+        
+        if(decodedJwt.userid){
+            req.userid = decodedJwt.userid;
+            next();
+        }
+        else{
+            res.status(403).json({})
+        }
+       
      }
     catch(err){
         return res.status(403).json({})

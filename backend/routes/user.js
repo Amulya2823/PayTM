@@ -1,17 +1,18 @@
 const express = require("express") 
 const router = express.Router();
 const zod = require("zod");
+const {User , Balance} = require("../db");
 const jwt = require("jsonwebtoken")
-const jwtSecret = require("../config")
-const User = require("../db")
-const authMiddleware = require("../middleware")
+const {jwtSecret} = require("../config")
+const {authMiddleware} = require("../middleware")
+
 
 const data = zod.object(
     {
         username : zod.string().email(),
-        firstname : zod.string().min(3),
-        lastName : zod.string().min(3),
-        password : zod.string().min(3)
+        firstName : zod.string(),
+        lastName : zod.string(),
+        password : zod.string()
     }
 )
 
@@ -25,7 +26,7 @@ router.post("/signup" , async (req , res) => {
     }
 
     const existingUser = await User.findOne({
-        username : req.body.username
+        username: req.body.username
     })
 
     if (existingUser) {
@@ -34,14 +35,20 @@ router.post("/signup" , async (req , res) => {
         })
     }
 
+   
     const user = await User.create({
         username : req.body.username,
         password : req.body.password,
-        firstname : req.body.firstname,
+        firstName : req.body.firstName,
         lastName : req.body.lastName
      })
 
      const userid = user._id
+
+    await Balance.create({
+        userid,
+        balance : 1 + Math.random() * 10000
+    })
 
      const token = jwt.sign({
         userid
@@ -57,7 +64,7 @@ router.post("/signin" , async (req , res) => {
     const parsedUsername = data.safeParse(req.username)
     const parsedPassword = data.safeParse(req.password)
 
-    if(!parsedUsername && !parsedPassword){
+    if(!parsedUsername.success && !parsedPassword.success){
         res.status(411).json({
 	    message: "Error while logging in"
         })
@@ -72,7 +79,7 @@ router.post("/signin" , async (req , res) => {
 
     if (user) {
 
-        const token = jwt.sign(userid, jwtSecret)
+        const token = jwt.sign(userid , jwtSecret)
         res.status(200).json({
             token : token
         })
@@ -85,7 +92,7 @@ router.post("/signin" , async (req , res) => {
 
 const updateBody = zod.object({
     password : zod.string().optional(),
-    firstname : zod.string().optional(),
+    firstName : zod.string().optional(),
     lastName : zod.string().optional()
 
 })
@@ -99,7 +106,7 @@ router.put("/",authMiddleware,async (req,res) => {
         })
     }
 
-    await User.updateOne( {_id : req.userid}, updateBody)
+    await User.updateOne( req.body , {_id : req.userid})
     res.status(200).json({
         message: "Updated successfully"
     })
@@ -111,7 +118,7 @@ router.get("/bulk" , async (req,res) => {
     const usersData = await User.find({
         $or : [{
         
-                firstname : {
+                firstName : {
                     "$regex" : params
                 },
         },  {
@@ -123,8 +130,9 @@ router.get("/bulk" , async (req,res) => {
     res.json({
         user : usersData.map( user => ({
             username : user.username,
-            firstname : user.firstname,
-            lastName : user.lastName
+            firstName : user.firstName,
+            lastName : user.lastName,
+            
         }))
     })
 })

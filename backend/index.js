@@ -1,15 +1,13 @@
 const express = require("express");
-const mainRouter = require("./routes")
-const userRouter = require("./routes/user")
-const jwtSecret = require("./config")
-const app = express();
 const cors = require("cors");
 
+const mainRouter = require("./routes/index")
 
-app.use(express.json());
+const app = express();
+
 app.use(cors());
+app.use(express.json());
 app.use("/api/v1" , mainRouter);
-app.use("/api/v1/user" ,userRouter)
 
 
 app.listen(3000);

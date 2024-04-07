@@ -1,13 +1,12 @@
+const {jwtSecret} = require("./config")
 const jwt = require("jsonwebtoken")
-const jwtSecret = require("./config")
-
 
 const authMiddleware = (req , res , next) => {
 
-    const authHeader =  req.headers.authHeader
+    const authHeader =  req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer")){
-        res.status(403).json({
+        return res.status(403).json({
             message : "You are not Authenticated"
         })
     }
@@ -15,7 +14,7 @@ const authMiddleware = (req , res , next) => {
     const token = authHeader.split(" ")[1]
 
     try{
-        const decodedJwt = jwt.decode(token , jwtSecret)
+        const decodedJwt = jwt.verify(token , jwtSecret)
         
         if(decodedJwt.userid){
             req.userid = decodedJwt.userid;
@@ -32,4 +31,4 @@ const authMiddleware = (req , res , next) => {
 
 }
 
-module.exports = authMiddleware;
+module.exports = {authMiddleware}

@@ -1,17 +1,17 @@
 const mongoose = require("mongoose");
 const { number } = require("zod");
-const {Schema} = "mongoose";
+
 
 mongoose.connect("mongodb://localhost:27017/paytm");
 
-const userData = new Schema({
+const userData = new mongoose.Schema({
     username :{
         type : String,
         lowercase : true ,
         required : true,
         unique : true,
         minLength : 3 ,
-        maxLength : 10
+        maxLength : 30
     } ,
     password : {
         type:String,
@@ -28,22 +28,27 @@ const userData = new Schema({
     lastName : {
         type:String,
         required : true,
-        minLength : 6 ,
+        minLength : 3 ,
         maxLength : 20
     }
 });
 
-const User = mongoose.model(User , userData )
 
-const bankSchema = new Schema({
-    userId : {
-        type : String,
+const bankSchema = new mongoose.Schema({
+    userid : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required : true
     },
     balance :{
-        type: float || number ,
+        type: Number ,
+        required : true
     }
 })
 
+const User = mongoose.model("User" , userData )
+const Balance = mongoose.model("Balance",bankSchema)
+
 module.exports = {
-    User
+    User , Balance
 }

@@ -1,4 +1,4 @@
-export default SendMoney = () => {
+export const SendMoney = () => {
     return <>
         
     </>

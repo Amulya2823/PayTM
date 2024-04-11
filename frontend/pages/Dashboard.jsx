@@ -1,4 +1,4 @@
-export default Dashboard = () => {
+export const Dashboard = () => {
     return <>
         
     </>

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 
 export const BottomWarning = ({label , buttonText , to}) => {
-    return <div className="flex justify-center text-sm py-2 text-slate-1000">
+    return <div className="flex justify-center font-semibold py-2 text-slate-1000 text-lg">
     <div>
        {label}
     </div>

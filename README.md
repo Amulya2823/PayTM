@@ -1,9 +1,9 @@
 
 ## Basic version of PayTM
 
-- Users should Sign Up & if it's succesfull , they are navigated to Dashboard page
-- If they are Signed In , they are navigated to Dashboard
-- Transactions are taken such that they can rollback if it is not successfull
+- Users should Sign Up & if it's successfull , they are navigated to Dashboard page
+- If they are Signed In , they are navigated to Dashboard page
+- Transactions are taken care such that they can rollback if transacion is not successfull
 
 ## Tech Stack
 
